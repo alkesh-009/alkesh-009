@@ -11,7 +11,9 @@ env:
 
 jobs:
   build-and-push:
+    name: Build and Push Docker Image to ECR
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       id-token: write
@@ -37,4 +39,4 @@ jobs:
           docker push $IMAGE_URI
 
       - name: Print image URI
-        run: echo "Image URI is: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
+        run: echo 'Image URI is: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}'
