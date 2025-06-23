@@ -6,7 +6,7 @@ on:
 
 env:
   AWS_REGION: ap-south-1
-  ECR_REPOSITORY: node-hello-world
+  ECR_REPOSITORY: testing/node-hello-world
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::123456789012:role/github-oidc-role
+          role-to-assume: arn:aws:iam::123456789012:role/node-hello-world-role
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
