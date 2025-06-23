@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: ap-south-1
+  AWS_REGION: eu-central-1
   ECR_REPOSITORY: testing/node-hello-world
   IMAGE_TAG: ${{ github.sha }}
 
