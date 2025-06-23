@@ -38,12 +38,26 @@ jobs:
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
-      - name: Deploy to ECS
+
+      - name: Fill in task definition with image URI
+        run: |
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          sed "s|REPLACE_ME|$IMAGE_URI|" taskdef.json > taskdef-filled.json
+
+      - name: Register new task definition revision
+        id: register-task
+        run: |
+          TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://taskdef-filled.json --query 'taskDefinition.taskDefinitionArn' --output text)
+          echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
+
+      - name: Deploy new task definition to ECS
         run: |
           aws ecs update-service \
             --cluster node-hello-cluster \
             --service node-hello-service \
+            --task-definition ${{ env.TASK_DEF_ARN }} \
             --force-new-deployment
+
       
       - name: Print image URI
         run: |
