@@ -1,10 +1,11 @@
 {
   "family": "node-hello-task",
   "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::403395453326:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
       "name": "node-hello-container",
-      "image": "REPLACE_ME", 
+      "image": "REPLACE_ME",
       "essential": true,
       "portMappings": [
         {
@@ -15,8 +16,7 @@
       ]
     }
   ],
-  "requiresCompatibilities": [ "FARGATE" ],
+  "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512"
 }
-
