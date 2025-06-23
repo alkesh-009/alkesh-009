@@ -1,4 +1,4 @@
-name: Build and Deploy to Amazon ECR
+name: Build and Deploy to Amazon ECS
 
 on:
   push:
@@ -10,10 +10,8 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  build-and-push:
-    name: Build and Push Docker Image to ECR
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       id-token: write
@@ -32,33 +30,27 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to ECR
+      - name: Build, tag, and push Docker image to ECR
         run: |
           IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
-
-      - name: Fill in task definition with image URI
+      - name: Fill in ECS task definition
         run: |
           IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           sed "s|REPLACE_ME|$IMAGE_URI|" taskdef.json > taskdef-filled.json
 
-      - name: Register new task definition revision
+      - name: Register ECS task definition
         id: register-task
         run: |
           TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://taskdef-filled.json --query 'taskDefinition.taskDefinitionArn' --output text)
           echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
 
-      - name: Deploy new task definition to ECS
+      - name: Deploy updated task to ECS
         run: |
           aws ecs update-service \
             --cluster node-hello-cluster \
             --service node-hello-service \
             --task-definition ${{ env.TASK_DEF_ARN }} \
             --force-new-deployment
-
-      
-      - name: Print image URI
-        run: |
-          echo "Image URI is: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
