@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 3000;
 
 // Simple route
 app.get('/', (req, res) => {
-  res.send('<h1 style="color: Red;">Hello from Node.js App deployed via CI/CD!</h1>');
+  res.send('<h1 style="color: Green;">Hello from Node.js App deployed via CI/CD!</h1>');
 });
 
 // Health check route
