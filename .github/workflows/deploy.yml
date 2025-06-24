@@ -55,6 +55,6 @@ jobs:
         run: |
           aws ecs update-service \
             --cluster node-hello-cluster \
-            --service node-hello-service \
+            --service node-hello-service-1 \
             --task-definition ${{ env.TASK_DEF_ARN }} \
             --force-new-deployment
