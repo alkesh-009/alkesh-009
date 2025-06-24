@@ -6,10 +6,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Alkesh",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
   }
 }
-
